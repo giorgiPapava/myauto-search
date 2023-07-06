@@ -1,18 +1,28 @@
 import { ProductsResponse } from "@/api/products/types";
 import { axiosInstance } from "@/lib/axios";
 import { useQuery } from "@tanstack/react-query";
+import { ReadonlyURLSearchParams, useSearchParams } from "next/navigation";
 
-const fetchProducts = async (search: any) => {
-  const response = await axiosInstance.get<ProductsResponse>("/ka/products", {
-    params: search,
+const fetchProducts = async (searchParams: ReadonlyURLSearchParams) => {
+  const response = await axiosInstance.get<ProductsResponse>(`/ka/products`, {
+    params: {
+      TypeID: searchParams.get("vehicleType"),
+      ForRent: searchParams.get("forRent"),
+      PriceFrom: searchParams.get("priceFrom"),
+      PriceTo: searchParams.get("priceTo"),
+      CurrencyID: searchParams.get("currency"),
+      Mans: searchParams.get("man"),
+      Cats: searchParams.get("cat"),
+    },
   });
   return response.data;
 };
 
-// TODO: add search types
-export const useProducts = (search: any) => {
+export const useProducts = () => {
+  const searchParams = useSearchParams();
+
   return useQuery({
-    queryKey: ["products", search],
-    queryFn: () => fetchProducts(search),
+    queryKey: ["products", searchParams.toString()],
+    queryFn: () => fetchProducts(searchParams),
   });
 };
