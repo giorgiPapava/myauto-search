@@ -13,6 +13,8 @@ const fetchProducts = async (searchParams: ReadonlyURLSearchParams) => {
       CurrencyID: searchParams.get("currency"),
       Mans: searchParams.get("man"),
       Cats: searchParams.get("cat"),
+      SortOrder: searchParams.get("sortOrder"),
+      Period: searchParams.get("period"),
     },
   });
   return response.data;

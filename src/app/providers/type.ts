@@ -12,6 +12,15 @@ export enum ForRentType {
   Sale,
   Rent,
 }
+export enum SortOrder {
+  None,
+  DateDesc,
+  DateAsc,
+  PriceDesc,
+  PriceAsc,
+  MileageDesc,
+  MileageAsc,
+}
 
 export enum CarFiltersActionTypes {
   SET_VEHICLE_TYPE = "SET_VEHICLE_TYPE",
@@ -21,6 +30,8 @@ export enum CarFiltersActionTypes {
   SET_CURRENCY_ID = "SET_CURRENCY_ID",
   SET_MAN = "SET_MAN",
   SET_CAT = "SET_CAT",
+  SET_SORT_ORDER = "SET_SORT_ORDER",
+  SET_PERIOD = "SET_PERIOD",
 }
 
 export interface CarFiltersState {
@@ -31,6 +42,8 @@ export interface CarFiltersState {
   currency: CurrencyID;
   man: Man | null;
   cat: Cat | null;
+  sortOrder: SortOrder;
+  period?: string;
 }
 export type CarFiltersAction =
   | {
@@ -60,7 +73,16 @@ export type CarFiltersAction =
   | {
       type: CarFiltersActionTypes.SET_CAT;
       payload: Cat;
-    };
+    }
+  | {
+      type: CarFiltersActionTypes.SET_SORT_ORDER;
+      payload: SortOrder;
+    }
+  | {
+      type: CarFiltersActionTypes.SET_PERIOD;
+      payload: string;
+    }
+    ;
 
 export interface CarFiltersContext {
   state: CarFiltersState;

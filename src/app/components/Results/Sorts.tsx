@@ -1,3 +1,5 @@
+import { useCarFilters } from "@/app/providers/FiltersProvider";
+import { CarFiltersActionTypes, SortOrder } from "@/app/providers/type";
 import {
   Select,
   SelectContent,
@@ -8,9 +10,19 @@ import {
 import React from "react";
 
 function Sorts({}) {
+  const { state, dispatch } = useCarFilters();
+
   return (
     <div className="flex gap-2">
-      <Select>
+      <Select
+        value={state.period}
+        onValueChange={(val) => {
+          dispatch({
+            type: CarFiltersActionTypes.SET_PERIOD,
+            payload: val,
+          });
+        }}
+      >
         <SelectTrigger className="w-[180px]">
           <SelectValue placeholder="პერიოდი" />
         </SelectTrigger>
@@ -23,17 +35,37 @@ function Sorts({}) {
         </SelectContent>
       </Select>
 
-      <Select defaultValue="1">
-        <SelectTrigger  className="w-[180px]">
+      <Select
+        value={state.sortOrder.toString()}
+        onValueChange={(val) =>
+          dispatch({
+            type: CarFiltersActionTypes.SET_SORT_ORDER,
+            payload: Number(val),
+          })
+        }
+      >
+        <SelectTrigger className="w-[180px]">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="1">თარიღი კლებადი</SelectItem>
-          <SelectItem value="2">თარიღი ზრდადი</SelectItem>
-          <SelectItem value="3">ფასი კლებადი</SelectItem>
-          <SelectItem value="4">ფასი ზრდადი</SelectItem>
-          <SelectItem value="5">გარბენი კლებადი</SelectItem>
-          <SelectItem value="6">გარბენი ზრდადი</SelectItem>
+          <SelectItem value={SortOrder.DateDesc.toString()}>
+            თარიღი კლებადი
+          </SelectItem>
+          <SelectItem value={SortOrder.DateAsc.toString()}>
+            თარიღი ზრდადი
+          </SelectItem>
+          <SelectItem value={SortOrder.PriceDesc.toString()}>
+            ფასი კლებადი
+          </SelectItem>
+          <SelectItem value={SortOrder.PriceAsc.toString()}>
+            ფასი ზრდადი
+          </SelectItem>
+          <SelectItem value={SortOrder.MileageDesc.toString()}>
+            გარბენი კლებადი
+          </SelectItem>
+          <SelectItem value={SortOrder.MileageAsc.toString()}>
+            გარბენი ზრდადი
+          </SelectItem>
         </SelectContent>
       </Select>
     </div>

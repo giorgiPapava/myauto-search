@@ -1,5 +1,7 @@
 "use client";
 
+import { getCats } from "@/api/cats";
+import { getMans } from "@/api/mans";
 import { VehicleType } from "@/app/components/Filters/VehicyleTypeFilter";
 import {
   CarFiltersAction,
@@ -8,7 +10,9 @@ import {
   CarFiltersState,
   CurrencyID,
   ForRentType,
+  SortOrder,
 } from "@/app/providers/type";
+import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
 import { Reducer, createContext, useContext, useMemo, useReducer } from "react";
 
@@ -56,6 +60,16 @@ const carFiltersReducer: (
         ...state,
         cat: action.payload,
       };
+    case CarFiltersActionTypes.SET_SORT_ORDER:
+      return {
+        ...state,
+        sortOrder: action.payload,
+      };
+    case CarFiltersActionTypes.SET_PERIOD:
+      return {
+        ...state,
+        period: action.payload,
+      };
     default: {
       throw new Error(
         `[CarFiltersProvider-context] Unhandled action type: ${action}`
@@ -65,20 +79,42 @@ const carFiltersReducer: (
 };
 
 const CarFiltersProvider = ({ children }: { children: React.ReactNode }) => {
+  const cats = useQuery({
+    queryKey: ["cats"],
+    queryFn: getCats,
+  });
+  const mans = useQuery({
+    queryKey: ["mans"],
+    queryFn: getMans,
+  });
   const searchParams = useSearchParams();
   const vehicleType = Number(searchParams.get("vehicleType")) as VehicleType;
   const forRent = Number(searchParams.get("forRent")) as ForRentType;
+  const sortOrder = Number(searchParams.get("sortOrder")) as SortOrder;
+  const cat =
+    cats.data?.data.find(
+      (c) => c.category_id.toString() === searchParams.get("cat")
+    ) || null;
+  const priceFrom = searchParams.get("priceFrom") || "";
+  const priceTo = searchParams.get("priceTo") || "";
+  const period = searchParams.get("period") || undefined;
+  const currency =
+    (Number(searchParams.get("currency")) as CurrencyID) || CurrencyID.GEL;
+  const man =
+    mans.data?.find((m) => m.man_id === searchParams.get("man")) || null;
 
   const [state, dispatch] = useReducer<
     Reducer<CarFiltersState, CarFiltersAction>
   >(carFiltersReducer, {
     vehicleType,
     forRent,
-    priceFrom: "",
-    priceTo: "",
-    currency: CurrencyID.GEL,
-    man: null,
-    cat: null,
+    priceFrom,
+    priceTo,
+    currency,
+    man,
+    cat,
+    sortOrder,
+    period,
   });
 
   const value = useMemo(
