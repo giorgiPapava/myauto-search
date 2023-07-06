@@ -90,7 +90,7 @@ const CarFiltersProvider = ({ children }: { children: React.ReactNode }) => {
   const searchParams = useSearchParams();
   const vehicleType = Number(searchParams.get("vehicleType")) as VehicleType;
   const forRent = Number(searchParams.get("forRent")) as ForRentType;
-  const sortOrder = Number(searchParams.get("sortOrder")) as SortOrder;
+  const sortOrder = Number(searchParams.get("sortOrder")) || SortOrder.DateDesc as SortOrder;
   const cat =
     cats.data?.data.find(
       (c) => c.category_id.toString() === searchParams.get("cat")
